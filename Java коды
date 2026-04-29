@@ -1,0 +1,126 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+class Student {
+    private String name;
+    private int id;
+    private ArrayList<Integer> grades;
+
+    public Student(String name, int id, ArrayList<Integer> grades) {
+        this.name = name;
+        this.id = id;
+        this.grades = grades;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public ArrayList<Integer> getGrades() {
+        return grades;
+    }
+
+    public double calculateGPA() {
+        if (grades.isEmpty()) {
+            return 0.0;
+        }
+
+        int sum = 0;
+        for (int grade : grades) {
+            sum += grade;
+        }
+
+        return (double) sum / grades.size();
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id +
+               ", Name: " + name +
+               ", Grades: " + grades +
+               ", GPA: " + String.format("%.2f", calculateGPA());
+    }
+}
+
+class StudentManagementSystem {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public void removeStudent(int id) {
+        students.removeIf(student -> student.getId() == id);
+    }
+
+    public Student findStudent(int id) {
+        for (Student student : students) {
+            if (student.getId() == id) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    public void sortStudentsByGPA() {
+        Collections.sort(students,
+                Comparator.comparingDouble(Student::calculateGPA).reversed());
+    }
+
+    public void displayStudents() {
+        for (Student student : students) {
+            System.out.println(student);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        StudentManagementSystem system = new StudentManagementSystem();
+
+        ArrayList<Integer> grades1 = new ArrayList<>();
+        grades1.add(90);
+        grades1.add(85);
+        grades1.add(88);
+
+        ArrayList<Integer> grades2 = new ArrayList<>();
+        grades2.add(75);
+        grades2.add(80);
+        grades2.add(78);
+
+        ArrayList<Integer> grades3 = new ArrayList<>();
+        grades3.add(95);
+        grades3.add(92);
+        grades3.add(96);
+
+        system.addStudent(new Student("Ali", 101, grades1));
+        system.addStudent(new Student("Aruzhan", 102, grades2));
+        system.addStudent(new Student("Dias", 103, grades3));
+
+        System.out.println("All students:");
+        system.displayStudents();
+
+        System.out.println("\nStudents sorted by GPA:");
+        system.sortStudentsByGPA();
+        system.displayStudents();
+
+        System.out.println("\nSearching for student with ID 102:");
+        Student found = system.findStudent(102);
+        if (found != null) {
+            System.out.println(found);
+        } else {
+            System.out.println("Student not found.");
+        }
+
+        System.out.println("\nRemoving student with ID 101...");
+        system.removeStudent(101);
+
+        System.out.println("\nUpdated student list:");
+        system.displayStudents();
+    }
+}
